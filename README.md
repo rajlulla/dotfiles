@@ -218,6 +218,7 @@ playwright-cli install --skills
 **Chezmoi repo, but NOT applied to home dir** (excluded via `.chezmoiignore`):
 
 - `Brewfile`
+- `claude-code-cloud-startup.sh`
 - `README.md` (this file)
 
 **Not tracked anywhere — manual on each machine:**

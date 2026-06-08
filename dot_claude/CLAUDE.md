@@ -136,6 +136,12 @@ Use this for complex, broad, or high-uncertainty tasks. Do not use it for simple
 
 ---
 
+# Local macOS Scope
+
+The next two sections describe the local Mac setup. Apply them only when working on that machine, or in an environment that explicitly provides the same tools. In cloud or Linux containers, inspect the actual environment first; do not assume Homebrew, chezmoi paths, macOS paths, or `rtk` exist.
+
+---
+
 # Environment
 
 - **Python:** Use `uv` (`uv add`, `uv run`, `uv sync`, `uv init`) instead of `pip install` or `python -m venv`. Install Python versions with `uv python install`.
@@ -158,7 +164,7 @@ rtk discover
 rtk proxy <cmd>
 ```
 
-All other commands are automatically rewritten by the Claude Code hook, for example `git status` becomes `rtk git status`.
+On the local Mac, all other commands are automatically rewritten by the Claude Code hook, for example `git status` becomes `rtk git status`.
 
 Verification:
 
