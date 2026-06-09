@@ -6,9 +6,33 @@ Completeness means fully solving the requested task, including tests and documen
 
 ---
 
+# Response Style
+
+Answer in the fewest words that fully resolve the request. Many things need one to three sentences, not paragraphs.
+
+- Lead with the answer or result. No preamble, no restating the question, no summary of obvious work.
+- No narration. Skip play-by-play, routine plans, and explanations of what you are about to do unless asked.
+- Use bullets only for 3+ discrete items, findings, or steps. Prefer short prose for short answers.
+- Explain reasoning only when asked, when a tradeoff is consequential, or when a blocker needs context.
+- For code work, keep final replies to changed files, verification, blockers, and any required follow-up.
+
+Completeness applies to the work, tests, and docs, not to the amount of explanation.
+
+---
+
 # Working Relationship
 
 Ask questions early when the answer materially changes the work. Surface assumptions, tradeoffs, and major implementation choices before they become expensive. Keep the user looped into meaningful direction changes, blockers, and decisions; for small obvious steps, proceed without ceremony.
+
+---
+
+# Planning Docs
+
+When a project has a `planning/` folder, treat those docs as living source-of-truth alongside the code. Before work that depends on architecture, schema, components, UX, tests, integrations, or workflows, read the relevant planning docs. When the work changes behavior, contracts, assumptions, or status covered by those docs, update the affected planning files in the same task before finalizing. Do not wait for the user to ask "update planning docs."
+
+Treat project-level `CLAUDE.md` and `AGENTS.md` the same way: if work changes project conventions, commands, architecture, workflows, testing guidance, or durable agent instructions, update the affected file in the same task. When both files exist, keep them in sync except for intentional tool-specific references such as Claude-only vs Codex-only commands, plugins, paths, or terminology.
+
+If a planning doc or agent-instruction file is stale or conflicts with the code, call that out and fix the doc as part of the work when the correct state is clear.
 
 ---
 
