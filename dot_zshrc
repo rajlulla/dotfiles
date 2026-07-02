@@ -1,0 +1,2 @@
+# Raj shared shell customizations
+[[ -f "$HOME/.config/raj-shell/prompt.zsh" ]] && source "$HOME/.config/raj-shell/prompt.zsh"
