@@ -123,15 +123,15 @@ The test: Every changed line should trace directly to the user's request.
 **Define success criteria. Loop until verified.**
 
 Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
+- "Add validation" -> "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" -> "Write a test that reproduces it, then make it pass"
+- "Refactor X" -> "Ensure tests pass before and after"
 
 For multi-step tasks, state a brief plan:
 ```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
+1. [Step] -> verify: [check]
+2. [Step] -> verify: [check]
+3. [Step] -> verify: [check]
 ```
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
@@ -160,39 +160,54 @@ Use this for complex, broad, or high-uncertainty tasks. Do not use it for simple
 
 ---
 
-# Local macOS Scope
+# Model Orchestration
 
-The next two sections describe the local Mac setup. Apply them only when working on that machine, or in an environment that explicitly provides the same tools. In cloud or Linux containers, inspect the actual environment first; do not assume Homebrew, chezmoi paths, macOS paths, or `rtk` exist.
+Use the strongest orchestration primitive available, with the top-level agent acting as lead rather than doing every token-heavy task itself.
+
+- **Fable 5 1M**: top-level orchestrator/planner/synthesizer/final reviewer. Use `high` thinking by default; avoid `xhigh`/max unless Raj explicitly asks or stakes justify it.
+- **Opus 4.8 1M**: deep reasoning, architecture, hard debugging, product tradeoffs, and second opinions. Use `xhigh` thinking.
+- **Codex GPT-5.5**: implementation, mechanical work, repo scans, audit, verification, and computer-use-heavy work. Use `xhigh` thinking.
+- **Sonnet 5 1M**: mid-tier Claude taste/UX/copy/styling worker when Fable/Opus would be overkill. Prefer `high` thinking; do not use as the default bulk/mechanical worker over Codex.
+
+All Claude-family model selections must use explicit 1M-context model IDs with `[1m]`; do not use shorter-context aliases like `claude/opus`, `claude/sonnet`, or `claude/fable` when an explicit 1M model is available. In Paseo/agent launches, always use permission-bypassing/full-access modes by default: Claude `bypassPermissions`, Codex `full-access`. For high-stakes decisions, run a Claude-family reasoning agent and Codex in parallel, then synthesize without letting either see the other's answer first. Keep the top-level orchestrator context lean by delegating codebase exploration, implementation, tests, browser/computer-use verification, and adversarial review.
+
 
 ---
 
 # Environment
 
 - **Python:** Use `uv` (`uv add`, `uv run`, `uv sync`, `uv init`) instead of `pip install` or `python -m venv`. Install Python versions with `uv python install`.
-- **Node:** Use the brew-installed global Node. Do not suggest `nvm`, `mise`, or `fnm`.
-- **Dotfiles:** Dotfiles are managed by chezmoi. Source repo: `~/.local/share/chezmoi/`. When modifying any tracked dotfile (`.zprofile`, `.gitconfig`, `~/.codex/`, etc.), surface `chezmoi re-add <path>` so source stays in sync.
-- **Package installs:** Use brew first, captured in `~/.local/share/chezmoi/Brewfile`. After installing new brew packages, remind: `brew bundle dump --file=~/.local/share/chezmoi/Brewfile --force`.
+- **Node:** Use the installed global Node/npm. Do not suggest `nvm`, `mise`, or `fnm` unless explicitly requested.
+- **Tool installs:** Use each tool's recommended installer or the already-installed binary path. Do not assume Homebrew is the installer for Claude, Codex, Paseo, Supabase, Docker, or other CLI tools.
+- **Docker and Supabase:** This VPS uses local Docker for local Supabase. Use plain `supabase start`, `supabase db reset`, and `supabase test db` unless project instructions say otherwise.
+
+---
+
+# Browser Automation
+
+For real-browser work — verifying UI, reproducing a rendering/interaction bug, screenshots, reading page console/network — use the globally installed `playwright-cli` (Playwright Agent CLI, on PATH) and its `playwright-cli` skill. It runs from any directory, so don't hand-write one-off Playwright scripts.
 
 ---
 
 # RTK - Rust Token Killer
 
-Prefix shell commands with `rtk`.
+RTK is a token-optimized CLI proxy for shell commands.
 
-Examples:
+Prefix shell commands with `rtk` when the output may be large or when token savings matter:
 
 ```bash
 rtk git status
-rtk cargo test
-rtk npm run build
-rtk pytest -q
+rtk npm run lint
+rtk npm test
+rtk supabase test db
 ```
 
-Useful meta commands:
+Use RTK meta commands directly:
 
 ```bash
 rtk gain
 rtk gain --history
+rtk discover
 rtk proxy <cmd>
 ```
 
