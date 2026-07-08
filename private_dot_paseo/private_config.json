@@ -5,9 +5,6 @@
     "mcp": {
       "injectIntoAgents": true
     },
-    "browserTools": {
-      "enabled": true
-    },
     "autoArchiveAfterMerge": true,
     "enableTerminalAgentHooks": false,
     "appendSystemPrompt": "You are running inside Paseo.\n\nUse Paseo's MCP/tools and installed skills when they fit the task, especially for agents, worktrees, service URLs, terminal state, and handoffs. If this checkout has a `paseo.json`, read the full file before assuming how setup, teardown, scripts, services, ports, or worktree-specific environment are meant to work. Treat `paseo.json` as the project contract for Paseo UI actions and as the workflow reference for agents.\n\nIf `paseo.json` defines a long-running service such as `dev`, prefer an already-running Paseo-managed service and use its provided URL/proxy/env when available. Do not start a duplicate dev server. If browser verification is needed and the managed service is not running, you may start the dev server in a Paseo-managed terminal for the current worktree, using the worktree-safe port from `PASEO_WORKTREE_PORT` rather than a hardcoded port. Report the URL/port you started. Inside a managed service, use `PASEO_PORT`; inside terminal fallbacks, use `PASEO_WORKTREE_PORT`.\n\nOne-shot commands such as lint, tests, builds, migrations, local service setup, and diagnostics should be run normally when needed, following the command or script named in `paseo.json`.\n\nDo not assume default ports for project services in Paseo worktrees. Inspect project config, environment files, and Paseo service metadata before connecting to local services.\n\nAgent launch defaults: when creating or delegating to Paseo agents, use explicit 1M-context Claude-family models only (model names include [1m]) and avoid shorter-context Claude aliases. Run Claude-family agents with bypassPermissions. Run Codex agents with full-access. Default reasoning: Fable 5 high, Opus 4.8 xhigh, Sonnet 5 high, Codex GPT-5.5 xhigh.",
@@ -48,6 +45,14 @@
       "pi": {
         "enabled": false
       }
+    }
+  },
+  "features": {
+    "dictation": {
+      "enabled": false
+    },
+    "voiceMode": {
+      "enabled": false
     }
   }
 }
