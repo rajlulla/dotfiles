@@ -1,2 +1,51 @@
-# Raj shared shell customizations
-[[ -f "$HOME/.config/raj-shell/prompt.zsh" ]] && source "$HOME/.config/raj-shell/prompt.zsh"
+# Prompt
+_prompt_host="$(hostname -s 2>/dev/null || hostname)"
+_prompt_host="${_prompt_host%.local}"
+_prompt_host_lower="$(echo "$_prompt_host" | tr '[:upper:]' '[:lower:]')"
+
+case "$_prompt_host_lower" in
+  rajs-vps*)
+    _prompt_host_display="Rajs-VPS"
+    _prompt_color="magenta"
+    ;;
+  rajs-mac-mini*)
+    _prompt_host_display="Rajs-Mac-mini"
+    _prompt_color="blue"
+    ;;
+  rajs-macbook-air*|rajs-macbookair*)
+    _prompt_host_display="Rajs-MacBook-Air"
+    _prompt_color="cyan"
+    ;;
+  rajs-server*|server*)
+    _prompt_host_display="Rajs-Server"
+    _prompt_color="green"
+    ;;
+  rajs-pi*)
+    _prompt_host_display="Rajs-Pi"
+    _prompt_color="yellow"
+    ;;
+  rajs-pc*)
+    _prompt_host_display="Rajs-PC"
+    _prompt_color="red"
+    ;;
+  *)
+    _prompt_host_display="$_prompt_host"
+    _prompt_color="white"
+    ;;
+esac
+
+PROMPT="%F{white}%n@%f%F{${_prompt_color}}${_prompt_host_display}%f:%F{cyan}%~%f %# "
+
+# zsh-autosuggestions
+if [[ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+elif command -v brew >/dev/null 2>&1 && [[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
+
+# zsh-syntax-highlighting
+if [[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif command -v brew >/dev/null 2>&1 && [[ -f "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi

@@ -6,33 +6,9 @@ Completeness means fully solving the requested task, including tests and documen
 
 ---
 
-# Response Style
-
-Answer in the fewest words that fully resolve the request. Many things need one to three sentences, not paragraphs.
-
-- Lead with the answer or result. No preamble, no restating the question, no summary of obvious work.
-- No narration. Skip play-by-play, routine plans, and explanations of what you are about to do unless asked.
-- Use bullets only for 3+ discrete items, findings, or steps. Prefer short prose for short answers.
-- Explain reasoning only when asked, when a tradeoff is consequential, or when a blocker needs context.
-- For code work, keep final replies to changed files, verification, blockers, and any required follow-up.
-
-Completeness applies to the work, tests, and docs, not to the amount of explanation.
-
----
-
 # Working Relationship
 
 Ask questions early when the answer materially changes the work. Surface assumptions, tradeoffs, and major implementation choices before they become expensive. Keep the user looped into meaningful direction changes, blockers, and decisions; for small obvious steps, proceed without ceremony.
-
----
-
-# Planning Docs
-
-When a project has a `planning/` folder, treat those docs as living source-of-truth alongside the code. Before work that depends on architecture, schema, components, UX, tests, integrations, or workflows, read the relevant planning docs. When the work changes behavior, contracts, assumptions, or status covered by those docs, update the affected planning files in the same task before finalizing. Do not wait for the user to ask "update planning docs."
-
-Treat project-level `CLAUDE.md` and `AGENTS.md` the same way: if work changes project conventions, commands, architecture, workflows, testing guidance, or durable agent instructions, update the affected file in the same task. When both files exist, keep them in sync except for intentional tool-specific references such as Claude-only vs Codex-only commands, plugins, paths, or terminology.
-
-If a planning doc or agent-instruction file is stale or conflicts with the code, call that out and fix the doc as part of the work when the correct state is clear.
 
 ---
 
@@ -123,15 +99,15 @@ The test: Every changed line should trace directly to the user's request.
 **Define success criteria. Loop until verified.**
 
 Transform tasks into verifiable goals:
-- "Add validation" -> "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" -> "Write a test that reproduces it, then make it pass"
-- "Refactor X" -> "Ensure tests pass before and after"
+- "Add validation" → "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Ensure tests pass before and after"
 
 For multi-step tasks, state a brief plan:
 ```
-1. [Step] -> verify: [check]
-2. [Step] -> verify: [check]
-3. [Step] -> verify: [check]
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
 ```
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
@@ -160,54 +136,33 @@ Use this for complex, broad, or high-uncertainty tasks. Do not use it for simple
 
 ---
 
-# Model Orchestration
-
-Use the strongest orchestration primitive available, with the top-level agent acting as lead rather than doing every token-heavy task itself.
-
-- **Fable 5 1M**: top-level orchestrator/planner/synthesizer/final reviewer. Use `high` thinking by default; avoid `xhigh`/max unless Raj explicitly asks or stakes justify it.
-- **Opus 4.8 1M**: deep reasoning, architecture, hard debugging, product tradeoffs, and second opinions. Use `xhigh` thinking.
-- **Codex GPT-5.5**: implementation, mechanical work, repo scans, audit, verification, and computer-use-heavy work. Use `xhigh` thinking.
-- **Sonnet 5 1M**: mid-tier Claude taste/UX/copy/styling worker when Fable/Opus would be overkill. Prefer `high` thinking; do not use as the default bulk/mechanical worker over Codex.
-
-All Claude-family model selections must use explicit 1M-context model IDs with `[1m]`; do not use shorter-context aliases like `claude/opus`, `claude/sonnet`, or `claude/fable` when an explicit 1M model is available. In Paseo/agent launches, always use permission-bypassing/full-access modes by default: Claude `bypassPermissions`, Codex `full-access`. For high-stakes decisions, run a Claude-family reasoning agent and Codex in parallel, then synthesize without letting either see the other's answer first. Keep the top-level orchestrator context lean by delegating codebase exploration, implementation, tests, browser/computer-use verification, and adversarial review.
-
-
----
-
 # Environment
 
 - **Python:** Use `uv` (`uv add`, `uv run`, `uv sync`, `uv init`) instead of `pip install` or `python -m venv`. Install Python versions with `uv python install`.
-- **Node:** Use the installed global Node/npm. Do not suggest `nvm`, `mise`, or `fnm` unless explicitly requested.
-- **Tool installs:** Use each tool's recommended installer or the already-installed binary path. Do not assume Homebrew is the installer for Claude, Codex, Paseo, Supabase, Docker, or other CLI tools.
-- **Docker and Supabase:** This VPS uses local Docker for local Supabase. Use plain `supabase start`, `supabase db reset`, and `supabase test db` unless project instructions say otherwise.
-
----
-
-# Browser Automation
-
-For real-browser work — verifying UI, reproducing a rendering/interaction bug, screenshots, reading page console/network — use the globally installed `playwright-cli` (Playwright Agent CLI, on PATH) and its `playwright-cli` skill. It runs from any directory, so don't hand-write one-off Playwright scripts.
+- **Node:** Use the brew-installed global Node. Do not suggest `nvm`, `mise`, or `fnm`.
+- **Dotfiles:** Dotfiles are managed by chezmoi. Source repo: `~/.local/share/chezmoi/`. When modifying any tracked dotfile (`.zprofile`, `.gitconfig`, `~/.codex/`, etc.), surface `chezmoi re-add <path>` so source stays in sync.
+- **Package installs:** Use brew first, captured in `~/.local/share/chezmoi/Brewfile`. After installing new brew packages, remind: `brew bundle dump --file=~/.local/share/chezmoi/Brewfile --force`.
 
 ---
 
 # RTK - Rust Token Killer
 
-RTK is a token-optimized CLI proxy for shell commands.
+Prefix shell commands with `rtk`.
 
-Prefix shell commands with `rtk` when the output may be large or when token savings matter:
+Examples:
 
 ```bash
 rtk git status
-rtk npm run lint
-rtk npm test
-rtk supabase test db
+rtk cargo test
+rtk npm run build
+rtk pytest -q
 ```
 
-Use RTK meta commands directly:
+Useful meta commands:
 
 ```bash
 rtk gain
 rtk gain --history
-rtk discover
 rtk proxy <cmd>
 ```
 

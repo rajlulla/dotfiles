@@ -1,0 +1,2 @@
+# Docker: default CLI operations to Plex PC over SSH
+export DOCKER_HOST="ssh://rajlulla@rajs-server"

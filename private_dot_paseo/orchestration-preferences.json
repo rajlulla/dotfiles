@@ -1,23 +1,33 @@
 {
   "providers": {
-    "orchestrator": "claude/claude-fable-5[1m]",
-    "planning": "claude/claude-fable-5[1m]",
-    "review": "claude/claude-fable-5[1m]",
+    "orchestrator": "claude/claude-fable-5",
+    "planning": "claude/claude-fable-5",
+    "review": "claude/claude-fable-5",
     "deep_reasoning": "claude/claude-opus-4-8[1m]",
     "ui": "claude/claude-opus-4-8[1m]",
-    "taste_worker": "claude/claude-sonnet-5[1m]",
+    "taste_worker": "claude/claude-sonnet-5",
     "impl": "codex/gpt-5.5",
     "mechanical": "codex/gpt-5.5",
     "audit": "codex/gpt-5.5",
-    "research": "codex/gpt-5.5"
+    "research": "codex/gpt-5.5",
+    "fast_impl": "codex/gpt-5.4",
+    "cheap_fast": "codex/gpt-5.4-mini"
   },
   "preferences": [
-    "All Claude-family providers must use explicit 1M-context model IDs with [1m] in the model name. Never use Claude aliases such as claude/opus, claude/sonnet, or claude/fable when launching Paseo agents.",
-    "Always run Claude-family Paseo agents in bypassPermissions mode. Always run Codex Paseo agents in full-access mode. Do not launch restricted/approval-gated agents unless Raj explicitly asks for a safer sandbox for that task.",
-    "Fable 5 1M is the top-level orchestrator/planner/synthesizer/final reviewer. Use high thinking by default, not xhigh/max, unless Raj explicitly asks or the task is existential/high-stakes.",
-    "Opus 4.8 1M is the deep-reasoning agent for architecture, root-cause debugging, hard product tradeoffs, and second opinions. Use xhigh thinking and bypassPermissions.",
-    "Codex GPT-5.5 is the implementation/mechanical/audit workhorse. Use xhigh thinking and full-access.",
-    "Sonnet 5 1M is a mid-tier Claude taste/UX/copy/styling worker when Fable/Opus would be overkill. Prefer high thinking and bypassPermissions when used; do not use it for bulk mechanical work over Codex.",
-    "For high-stakes decisions, run Fable or Opus plus Codex in parallel and synthesize. Keep the top-level orchestrator context lean by delegating repo scans, implementation, verification, and computer-use-heavy work."
+    "Treat the provider map as defaults and preferences, not hard routing rules. Choose the provider, model, and effort level that fit the task, current context, available models, risk, and expected value of delegation.",
+    "Before launching Paseo agents, use Paseo provider/model/mode discovery when the exact provider ID, model availability, mode, or effort option is uncertain. Do not invent provider IDs. Use explicit 1M Claude variants where available and useful, but do not add [1m] to models that do not expose a 1M variant.",
+    "Prefer delegation when it improves speed, quality, independence, or context management. Do work directly when that is clearly simpler.",
+    "Claude-family agents should usually run with bypassPermissions unless Raj explicitly asks for a safer sandbox. Codex agents should usually run full-access unless Raj explicitly asks for restricted mode.",
+    "Fable, Opus, Sonnet, and Codex all have valid roles. Fable is strong for judgment, planning, synthesis, and product taste. Opus is strong for deep reasoning, architecture, root-cause debugging, and hard tradeoffs. Sonnet is useful for scoped Claude-family work, UI/copy/taste passes, and advisor or wrapper tasks. Codex is strong for implementation, mechanical work, repo-heavy inspection, audit, and verification.",
+    "Use the effort level that fits the work. Routine tasks do not need maximum effort; ambiguous, high-risk, broad, or repeatedly failing tasks may justify higher effort.",
+    "If the parent is Claude and implementation is non-trivial, strongly consider handing implementation to Codex while reserving Claude for planning, review, or judgment.",
+    "If the parent is Codex and the task involves architecture, taste, UX, or high-risk judgment, strongly consider a Claude advisor, committee, or review handoff.",
+    "For high-stakes decisions, use at least two contrasting perspectives, usually Claude plus Codex, then synthesize.",
+    "For handoffs, the receiving agent starts blank. Include task, context, relevant files, current state, tried approaches, decisions, acceptance criteria, and constraints.",
+    "For loops, pair worker and verifier on different provider families when practical. Bound loops with max iterations and/or max time.",
+    "For committees, use analysis-only prompts. Committee members do not edit files. The orchestrator synthesizes, implements or delegates implementation, then sends the diff back for review.",
+    "For advisors, use analysis-only prompts. The advisor gives judgment; the orchestrator decides what to do.",
+    "Judge outputs by correctness, completeness, simplicity, test coverage, alignment with user constraints, scope control, use of the strongest appropriate project primitive, absence of band-aids, verification quality, and explicit uncertainty.",
+    "Escalate when output quality is below the bar. Do not ship mediocre work because the first chosen model was cheaper or faster."
   ]
 }

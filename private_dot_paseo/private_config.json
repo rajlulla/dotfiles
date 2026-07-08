@@ -1,15 +1,12 @@
 {
   "version": 1,
   "daemon": {
-    "listen": "100.68.56.124:6767",
-    "hostnames": [
-      "rajs-vps",
-      "100.68.56.124",
-      "localhost",
-      ".localhost"
-    ],
+    "listen": "127.0.0.1:6767",
     "mcp": {
       "injectIntoAgents": true
+    },
+    "browserTools": {
+      "enabled": true
     },
     "autoArchiveAfterMerge": true,
     "enableTerminalAgentHooks": false,
@@ -50,18 +47,7 @@
       },
       "pi": {
         "enabled": false
-      },
-      "claude": {
-        "enabled": true
       }
-    }
-  },
-  "features": {
-    "dictation": {
-      "enabled": false
-    },
-    "voiceMode": {
-      "enabled": false
     }
   }
 }
