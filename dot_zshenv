@@ -1,2 +1,5 @@
-# Docker: default CLI operations to Plex PC over SSH
-export DOCKER_HOST="ssh://rajlulla@rajs-server"
+export PATH="$HOME/.npm-global/bin:$HOME/.local/bin:$HOME/bin:$PATH"
+
+if [[ -r "$HOME/.zshenv.local" ]]; then
+  source "$HOME/.zshenv.local"
+fi
