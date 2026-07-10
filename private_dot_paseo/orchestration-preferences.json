@@ -4,25 +4,77 @@
     "planning": "claude/claude-fable-5",
     "review": "claude/claude-fable-5",
     "deep_reasoning": "claude/claude-opus-4-8[1m]",
-    "ui": "claude/claude-opus-4-8[1m]",
-    "taste_worker": "claude/claude-sonnet-5",
-    "impl": "codex/gpt-5.5",
-    "mechanical": "codex/gpt-5.5",
-    "audit": "codex/gpt-5.5",
-    "research": "codex/gpt-5.5",
+    "ui": "codex/gpt-5.6-sol",
+    "taste_worker": "codex/gpt-5.6-sol",
+    "impl": "codex/gpt-5.6-sol",
+    "mechanical": "codex/gpt-5.6-luna",
+    "audit": "codex/gpt-5.6-sol",
+    "research": "codex/gpt-5.6-sol",
     "fast_impl": "codex/gpt-5.4",
     "cheap_fast": "codex/gpt-5.4-mini"
   },
+  "role_profiles": {
+    "orchestrator": {
+      "purpose": "Own task decomposition, delegation, synthesis, and final delivery.",
+      "thinkingOptionId": "high"
+    },
+    "planning": {
+      "purpose": "Develop plans, clarify tradeoffs, and define verifiable acceptance criteria.",
+      "thinkingOptionId": "high"
+    },
+    "review": {
+      "purpose": "Critique proposed work or diffs for correctness, scope, and risk.",
+      "thinkingOptionId": "high"
+    },
+    "deep_reasoning": {
+      "purpose": "Resolve hard architecture, root-cause, and high-stakes judgment questions.",
+      "thinkingOptionId": "max"
+    },
+    "ui": {
+      "purpose": "Build, refine, and visually verify product UI.",
+      "thinkingOptionId": "max"
+    },
+    "taste_worker": {
+      "purpose": "Create or critique visual presentation, interaction design, and product polish.",
+      "thinkingOptionId": "max"
+    },
+    "impl": {
+      "purpose": "Implement substantial product changes, including tests and verification.",
+      "thinkingOptionId": "xhigh"
+    },
+    "mechanical": {
+      "purpose": "Execute bounded, well-specified implementation or maintenance work.",
+      "thinkingOptionId": "medium"
+    },
+    "audit": {
+      "purpose": "Inspect code, migrations, tests, and integrations for defects and regressions.",
+      "thinkingOptionId": "xhigh"
+    },
+    "research": {
+      "purpose": "Investigate repositories, documentation, and technical questions before a decision or implementation.",
+      "thinkingOptionId": "high"
+    },
+    "fast_impl": {
+      "purpose": "Handle straightforward implementation work where turnaround matters more than maximum depth.",
+      "thinkingOptionId": "medium"
+    },
+    "cheap_fast": {
+      "purpose": "Handle low-risk, tightly bounded tasks at minimum cost.",
+      "thinkingOptionId": "medium"
+    }
+  },
   "preferences": [
-    "Treat the provider map as defaults and preferences, not hard routing rules. Choose the provider, model, and effort level that fit the task, current context, available models, risk, and expected value of delegation.",
-    "Before launching Paseo agents, use Paseo provider/model/mode discovery when the exact provider ID, model availability, mode, or effort option is uncertain. Do not invent provider IDs. Use explicit 1M Claude variants where available and useful, but do not add [1m] to models that do not expose a 1M variant.",
+    "Treat the provider map and role profiles as defaults, not hard routing rules. Choose the role that fits the task, pass its provider string verbatim to Paseo, and apply its thinkingOptionId separately. Override only when the task context, risk, or expected value justifies it.",
+    "Paseo skills read only the providers map and this preferences array; role_profiles (purpose + thinkingOptionId) is orchestrator-facing guidance that skills do not parse. The orchestrator must set each agent's thinkingOptionId explicitly at create_agent time rather than assume a skill applied the role's effort.",
+    "Before launching Paseo agents, use provider/model/mode discovery when the exact provider ID, model availability, mode, or effort option is uncertain. Do not invent provider IDs. Among Claude models only Opus exposes a separate 1M variant ([1m]); Fable 5 and Sonnet 5 are natively 1M, so never append [1m] to them. Use the [1m] Opus ID when selecting Opus, and confirm the created agent's model matches what you intended before relying on it.",
+    "All subagent work goes through Paseo agents (create_agent), not built-in/inline subagent tools — this keeps model policy, cost visibility, and steering in one place.",
     "Prefer delegation when it improves speed, quality, independence, or context management. Do work directly when that is clearly simpler.",
     "Claude-family agents should usually run with bypassPermissions unless Raj explicitly asks for a safer sandbox. Codex agents should usually run full-access unless Raj explicitly asks for restricted mode.",
-    "Fable, Opus, Sonnet, and Codex all have valid roles. Fable is strong for judgment, planning, synthesis, and product taste. Opus is strong for deep reasoning, architecture, root-cause debugging, and hard tradeoffs. Sonnet is useful for scoped Claude-family work, UI/copy/taste passes, and advisor or wrapper tasks. Codex is strong for implementation, mechanical work, repo-heavy inspection, audit, and verification.",
-    "Use the effort level that fits the work. Routine tasks do not need maximum effort; ambiguous, high-risk, broad, or repeatedly failing tasks may justify higher effort.",
+    "Fable is the default for orchestration, planning, and review; Opus 4.8 (1M) is the default for deep reasoning and high-stakes judgment. GPT-5.6 Sol is the default for UI, visual presentation, implementation, audit, and research. GPT-5.6 Luna is the default for bounded mechanical work. Do not select a model merely to preserve provider variety.",
+    "Do not use ultra as a default thinking level: it enables automatic task delegation. Use it only when that behavior is explicitly intended.",
     "If the parent is Claude and implementation is non-trivial, strongly consider handing implementation to Codex while reserving Claude for planning, review, or judgment.",
-    "If the parent is Codex and the task involves architecture, taste, UX, or high-risk judgment, strongly consider a Claude advisor, committee, or review handoff.",
-    "For high-stakes decisions, use at least two contrasting perspectives, usually Claude plus Codex, then synthesize.",
+    "If the parent is Codex and the task involves architecture or high-risk judgment, strongly consider a Fable or Opus advisor, committee, or review handoff.",
+    "For high-stakes decisions, use at least two contrasting perspectives, usually Fable or Opus plus Codex, then synthesize.",
     "For handoffs, the receiving agent starts blank. Include task, context, relevant files, current state, tried approaches, decisions, acceptance criteria, and constraints.",
     "For loops, pair worker and verifier on different provider families when practical. Bound loops with max iterations and/or max time.",
     "For committees, use analysis-only prompts. Committee members do not edit files. The orchestrator synthesizes, implements or delegates implementation, then sends the diff back for review.",

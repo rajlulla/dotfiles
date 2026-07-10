@@ -141,7 +141,20 @@ Use this for complex, broad, or high-uncertainty tasks. Do not use it for simple
 - **Python:** Use `uv` (`uv add`, `uv run`, `uv sync`, `uv init`) instead of `pip install` or `python -m venv`. Install Python versions with `uv python install`.
 - **Node:** Use the official installer first, then Homebrew if the official installer is not a good fit. Do not suggest `nvm`, `mise`, or `fnm`.
 - **Docker:** Treat Docker as Linux/VPS-only. Do not configure or assume Docker on macOS.
+- **Browser:** Use `playwright-cli` for all browser work (automation, verification, screenshots) — see the playwright-cli skill.
 - **Dotfiles:** Dotfiles are managed by chezmoi. Source repo: `~/.local/share/chezmoi/`. When modifying any tracked dotfile (`.zprofile`, `.gitconfig`, `~/.claude/`, etc.), surface `chezmoi re-add <path>` so source stays in sync.
+
+---
+
+# Headless VPS (rajs-vps)
+
+When on rajs-vps: headless, on Tailscale (`100.68.56.124`). Anything meant for human eyes — dev servers, demos, dashboards — binds 0.0.0.0 and gets reported as `http://100.68.56.124:<port>` proactively, without being asked. Localhost URLs are for agent-side verification only.
+
+---
+
+# npm workspaces
+
+Never run bare `npm install <pkg>` from a subdirectory of a workspaces monorepo — npm may target the ROOT manifest. Use `npm install <pkg> -w <workspace>` from the repo root (this includes tools that wrap npm, like `npx expo install`), and check `git status` afterward to confirm only the intended manifests changed.
 
 ---
 
