@@ -2,16 +2,16 @@
   "providers": {
     "orchestrator": "claude/claude-fable-5",
     "planning": "claude/claude-fable-5",
-    "review": "claude/claude-fable-5",
+    "review": "codex/gpt-5.6-sol",
     "deep_reasoning": "claude/claude-opus-4-8[1m]",
     "ui": "codex/gpt-5.6-sol",
     "taste_worker": "codex/gpt-5.6-sol",
-    "impl": "codex/gpt-5.6-sol",
-    "mechanical": "codex/gpt-5.6-luna",
-    "audit": "codex/gpt-5.6-sol",
-    "research": "codex/gpt-5.6-sol",
-    "fast_impl": "codex/gpt-5.4",
-    "cheap_fast": "codex/gpt-5.4-mini"
+    "impl": "claude/claude-sonnet-5",
+    "mechanical": "claude/claude-sonnet-5",
+    "audit": "claude/claude-opus-4-8[1m]",
+    "research": "claude/claude-sonnet-5",
+    "fast_impl": "codex/gpt-5.6-luna",
+    "cheap_fast": "codex/gpt-5.6-luna"
   },
   "role_profiles": {
     "orchestrator": {
@@ -20,7 +20,7 @@
     },
     "planning": {
       "purpose": "Develop plans, clarify tradeoffs, and define verifiable acceptance criteria.",
-      "thinkingOptionId": "high"
+      "thinkingOptionId": "medium"
     },
     "review": {
       "purpose": "Critique proposed work or diffs for correctness, scope, and risk.",
@@ -28,19 +28,19 @@
     },
     "deep_reasoning": {
       "purpose": "Resolve hard architecture, root-cause, and high-stakes judgment questions.",
-      "thinkingOptionId": "max"
+      "thinkingOptionId": "high"
     },
     "ui": {
       "purpose": "Build, refine, and visually verify product UI.",
-      "thinkingOptionId": "max"
+      "thinkingOptionId": "high"
     },
     "taste_worker": {
       "purpose": "Create or critique visual presentation, interaction design, and product polish.",
-      "thinkingOptionId": "max"
+      "thinkingOptionId": "high"
     },
     "impl": {
       "purpose": "Implement substantial product changes, including tests and verification.",
-      "thinkingOptionId": "xhigh"
+      "thinkingOptionId": "high"
     },
     "mechanical": {
       "purpose": "Execute bounded, well-specified implementation or maintenance work.",
@@ -48,11 +48,11 @@
     },
     "audit": {
       "purpose": "Inspect code, migrations, tests, and integrations for defects and regressions.",
-      "thinkingOptionId": "xhigh"
+      "thinkingOptionId": "high"
     },
     "research": {
       "purpose": "Investigate repositories, documentation, and technical questions before a decision or implementation.",
-      "thinkingOptionId": "high"
+      "thinkingOptionId": "medium"
     },
     "fast_impl": {
       "purpose": "Handle straightforward implementation work where turnaround matters more than maximum depth.",
@@ -60,7 +60,7 @@
     },
     "cheap_fast": {
       "purpose": "Handle low-risk, tightly bounded tasks at minimum cost.",
-      "thinkingOptionId": "medium"
+      "thinkingOptionId": "low"
     }
   },
   "preferences": [
@@ -70,10 +70,10 @@
     "All subagent work goes through Paseo agents (create_agent), not built-in/inline subagent tools — this keeps model policy, cost visibility, and steering in one place.",
     "Prefer delegation when it improves speed, quality, independence, or context management. Do work directly when that is clearly simpler.",
     "Claude-family agents should usually run with bypassPermissions unless Raj explicitly asks for a safer sandbox. Codex agents should usually run full-access unless Raj explicitly asks for restricted mode.",
-    "Fable is the default for orchestration, planning, and review; Opus 4.8 (1M) is the default for deep reasoning and high-stakes judgment. GPT-5.6 Sol is the default for UI, visual presentation, implementation, audit, and research. GPT-5.6 Luna is the default for bounded mechanical work. Do not select a model merely to preserve provider variety.",
+    "Fable is the default for orchestration and planning. Opus 4.8 (1M) is the default for deep reasoning, high-stakes judgment, and technical audit. GPT-5.6 Sol is the default for review, UI, and visual presentation. Sonnet 5 is the default for implementation, bounded mechanical work, and research. GPT-5.6 Luna is the fast and economical implementation fallback. Do not select a model merely to preserve provider variety.",
     "Do not use ultra as a default thinking level: it enables automatic task delegation. Use it only when that behavior is explicitly intended.",
-    "If the parent is Claude and implementation is non-trivial, strongly consider handing implementation to Codex while reserving Claude for planning, review, or judgment.",
-    "If the parent is Codex and the task involves architecture or high-risk judgment, strongly consider a Fable or Opus advisor, committee, or review handoff.",
+    "If the parent is Claude and implementation is non-trivial, strongly consider handing implementation to Codex while reserving Claude for planning or high-stakes judgment.",
+    "If the parent is Codex and the task involves architecture or high-risk judgment, strongly consider a Fable or Opus advisor or committee handoff.",
     "For high-stakes decisions, use at least two contrasting perspectives, usually Fable or Opus plus Codex, then synthesize.",
     "For handoffs, the receiving agent starts blank. Include task, context, relevant files, current state, tried approaches, decisions, acceptance criteria, and constraints.",
     "For loops, pair worker and verifier on different provider families when practical. Bound loops with max iterations and/or max time.",
