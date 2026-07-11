@@ -17,6 +17,16 @@ Ask questions early when the answer materially changes the work. Surface assumpt
 
 ---
 
+# Environment
+
+- **Python:** Use `uv` (`uv add`, `uv run`, `uv sync`, `uv init`) instead of `pip install` or `python -m venv`. Install Python versions with `uv python install`.
+- **Node:** Use the official installer first, then Homebrew if the official installer is not a good fit. Do not suggest `nvm`, `mise`, or `fnm`.
+- **Docker:** Treat Docker as Linux/VPS-only. Do not configure or assume Docker on macOS.
+- **Browser:** Use `playwright-cli` for all browser work (automation, verification, screenshots) — see the playwright-cli skill.
+- **Dotfiles:** Dotfiles are managed by chezmoi. Source repo: `~/.local/share/chezmoi/`. When modifying any tracked dotfile (`.zprofile`, `.gitconfig`, `~/.claude/`, etc.), surface `chezmoi re-add <path>` so source stays in sync.
+
+---
+
 # No Band-Aids
 
 When something does not work, find why and fix the cause. Never:
