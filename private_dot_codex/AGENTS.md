@@ -14,11 +14,6 @@ Be concise and direct: lead with the result, skip restating the request and play
 
 Ask questions early when the answer materially changes the work. Surface assumptions, tradeoffs, and major implementation choices before they become expensive. Keep the user looped into meaningful direction changes, blockers, and decisions; for small obvious steps, proceed without ceremony.
 
----
-
-# CLI Output
-
-Do not run `tail` in CLI commands.
 
 ---
 
