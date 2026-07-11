@@ -4,6 +4,10 @@ Do the whole thing. Do it right. Search before building. Test before shipping. P
 
 Completeness means fully solving the requested task, including tests and documentation when they matter. It does not mean expanding scope, inventing features, or polishing unrelated code.
 
+# Response Style
+
+Be concise and direct: lead with the result, skip restating the request and play-by-play narration, use short bullets when useful, and explain reasoning only for consequential tradeoffs, blockers, or when asked.
+
 ---
 
 # Working Relationship
@@ -123,66 +127,3 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 Use idiomatic naming for the language. Prefer strong types and generated types. Avoid `any`, un-narrowed `unknown`, untyped payloads, and implicit returns when the language/tooling can prevent them.
 
 ---
-
-# Parallel Research and Worker Chats
-
-For large tasks that naturally split into independent workstreams, use the strongest parallelization available.
-
-If the runtime supports subagents or native workflow orchestration, use that for coordinated research, investigation, test planning, or implementation review. Keep one agent as the orchestrator: define the goal, assign bounded worker scopes, reconcile conflicts, and produce the final answer.
-
-If subagents are unavailable or not the right fit, simulate the pattern with exact copy/paste prompts for separate worker chats. Each worker prompt should include the shared goal, narrow scope, files/docs to inspect, constraints, and required final report format. Tell the user whether to run the worker chats sequentially or in parallel, then use the pasted reports to decide the final plan or implementation.
-
-Use this for complex, broad, or high-uncertainty tasks. Do not use it for simple changes where normal search, parallel tool calls, and direct implementation are faster.
-
----
-
-# Environment
-
-- **Python:** Use `uv` (`uv add`, `uv run`, `uv sync`, `uv init`) instead of `pip install` or `python -m venv`. Install Python versions with `uv python install`.
-- **Node:** Use the official installer first, then Homebrew if the official installer is not a good fit. Do not suggest `nvm`, `mise`, or `fnm`.
-- **Docker:** Treat Docker as Linux/VPS-only. Do not configure or assume Docker on macOS.
-- **Browser:** Use `playwright-cli` for all browser work (automation, verification, screenshots) — see the playwright-cli skill.
-- **Dotfiles:** Dotfiles are managed by chezmoi. Source repo: `~/.local/share/chezmoi/`. When modifying any tracked dotfile (`.zprofile`, `.gitconfig`, `~/.codex/`, etc.), surface `chezmoi re-add <path>` so source stays in sync.
-
----
-
-# Headless VPS (rajs-vps)
-
-When on rajs-vps: headless, on Tailscale (`100.68.56.124`). Anything meant for human eyes — dev servers, demos, dashboards — binds 0.0.0.0 and gets reported as `http://100.68.56.124:<port>` proactively, without being asked. Localhost URLs are for agent-side verification only.
-
----
-
-# npm workspaces
-
-Never run bare `npm install <pkg>` from a subdirectory of a workspaces monorepo — npm may target the ROOT manifest. Use `npm install <pkg> -w <workspace>` from the repo root (this includes tools that wrap npm, like `npx expo install`), and check `git status` afterward to confirm only the intended manifests changed.
-
----
-
-# RTK - Rust Token Killer
-
-Prefix shell commands with `rtk`.
-
-Examples:
-
-```bash
-rtk git status
-rtk cargo test
-rtk npm run build
-rtk pytest -q
-```
-
-Useful meta commands:
-
-```bash
-rtk gain
-rtk gain --history
-rtk proxy <cmd>
-```
-
-Verification:
-
-```bash
-rtk --version
-rtk gain
-which rtk
-```
