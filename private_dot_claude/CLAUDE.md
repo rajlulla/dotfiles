@@ -1,136 +1,52 @@
 # The Standard
 
-Do the whole thing. Do it right. Search before building. Test before shipping. Prefer the permanent fix over a workaround when the real fix is within reach. The answer should be the finished product, not a plan to build it.
+Do the whole thing. Do it right. Search before building. Test before shipping. Prefer the permanent fix over a workaround when the real fix is within reach. Deliver the finished product, not a plan to build it.
 
 Completeness means fully solving the requested task, including tests and documentation when they matter. It does not mean expanding scope, inventing features, or polishing unrelated code.
 
 # Response Style
 
-Be concise and direct: lead with the result, skip restating the request and play-by-play narration, use short bullets when useful, and explain reasoning only for consequential tradeoffs, blockers, or when asked.
+Be concise and direct. Lead with the result, skip restating the request and routine play-by-play, use short bullets when useful, and explain reasoning only for consequential tradeoffs, blockers, or when asked.
 
 ---
 
 # Working Relationship
 
-Ask questions early when the answer materially changes the work. Surface assumptions, tradeoffs, and major implementation choices before they become expensive. Keep the user looped into meaningful direction changes, blockers, and decisions; for small obvious steps, proceed without ceremony.
-
+Surface consequential assumptions, tradeoffs, and major implementation choices before they become expensive. Ask only when ambiguity materially changes the implementation; otherwise choose the safest reasonable interpretation and proceed. Keep the user informed about meaningful direction changes, blockers, and decisions, not small obvious steps.
 
 ---
 
 # Environment
 
-- **Host detection:** These instructions are shared between macOS and Linux/VPS. Inspect the current OS and available tools before making environment-specific assumptions. Do not infer the host from repository paths, prior sessions, or user profile.
-- **Python:** Use `uv` (`uv add`, `uv run`, `uv sync`, `uv init`) instead of `pip install` or `python -m venv`. Install Python versions with `uv python install`.
-- **Node:** Prefer the official Node installer when installation is required. On macOS, Homebrew is the fallback; on Debian-based Linux, use the project's documented setup or the appropriate system package/repository. Do not suggest `nvm`, `mise`, or `fnm`.
-- **Docker:** Docker is supported only on Linux/VPS in Raj's environment. Do not configure or assume Docker on macOS.
-- **Services:** On Linux/VPS, account for headless operation and systemd/user services when applicable. On macOS, prefer native foreground applications or launch mechanisms already used by the project; do not assume systemd.
-- **Browser:** Use `playwright-cli` for browser automation, verification, and screenshots on either platform. Do not assume a visible desktop browser on Linux/VPS.
-- **Dotfiles:** Dotfiles are managed by chezmoi. Source repo: `~/.local/share/chezmoi/`. When modifying a tracked dotfile, run or surface `chezmoi re-add <path>` so the source stays synchronized.
+- **Host and Docker:** Most development runs on Linux/VPS, but these instructions are shared with macOS. Detect the current host before acting. Docker may be used only on Linux/VPS; never install, configure, or run Docker on macOS.
+- **Python:** Use `uv` (`uv add`, `uv run`, `uv sync`, `uv init`) instead of bare `pip install` or manually creating virtual environments. Install Python versions with `uv python install`.
+- **Node:** Use the project's declared package manager and the existing Node installation. If Node must be installed, use an official distribution or the host's appropriate package source. Do not introduce `nvm`, `mise`, or `fnm` unless requested.
+- **Services:** On Linux/VPS, account for headless operation and systemd/user services when applicable. On macOS, use the project's existing native launch mechanism; do not assume systemd.
+- **Browser:** Use `playwright-cli` for browser automation, verification, and screenshots when available. Do not assume a visible desktop browser on Linux/VPS.
+- **Dotfiles:** Dotfiles are managed by chezmoi at `~/.local/share/chezmoi/`. When editing an applied destination file, use `chezmoi re-add`; when editing the source directly, use `chezmoi apply`. Verify the resulting diff.
 
 ---
 
-# No Band-Aids
+# Engineering Principles
 
-When something does not work, find why and fix the cause. Never:
+## Root Causes, Not Band-Aids
 
-- Bypass safety checks (`--no-verify`, disabling lints, skipping tests, suppressing type errors with `as any` / `# type: ignore` / `@ts-expect-error` / `@SuppressWarnings`)
-- Wrap a real bug in try/catch to make the symptom disappear
-- Hardcode the value that is failing instead of fixing what computed it wrong
-- Comment out / `.skip` the test that started failing
-- Use `setTimeout` / `sleep` / arbitrary retries to mask a race condition instead of resolving the ordering
-- Delete or rewrite state to "make the error go away" when investigation would explain what produced the bad state
+Find and fix the cause. Do not use disabled checks, suppressed errors, skipped tests, arbitrary retries or sleeps, hardcoded failing values, broad exception handling, or state rewrites merely to hide a defect. When an exception is genuinely required at a system boundary, narrowly scope it and document why.
 
-If the real fix is genuinely out of scope, say so explicitly. Do not ship a workaround silently.
+## Strongest Primitive
 
----
+Use the strongest named boundary or platform primitive the project already provides. Prefer versioned migrations over ad-hoc schema edits, typed contracts over hand-built payloads, transactions or workflows over fragile chains, framework cache APIs over manual refresh logic, design-system components over one-offs, and native batch APIs over manual orchestration. Avoid duplicated validation, mixed error models, partial failure, and unnecessary round trips.
 
-# Strongest Primitive
+## Simplicity and Scope
 
-Use the strongest named boundary or platform primitive the project already provides. Expose app operations, not raw infrastructure details, when there are domain rules, authorization checks, validation, workflows, cache/revalidation behavior, transactions, batching opportunities, or performance-sensitive composition.
+Implement the minimum complete solution. Do not add speculative features or abstractions, refactor unrelated code, or silently clean up pre-existing issues. Match the existing style. Remove only the orphaned code created by your own changes, and mention unrelated debt rather than expanding scope.
 
-- Versioned migrations over ad-hoc schema edits
-- Infrastructure-as-code over console clicks
-- Typed API/RPC/server-function boundaries over raw client-side storage queries
-- Generated SDK clients or typed contracts over hand-built payloads
-- Transactions, workflows, or queues over fragile chains of independent calls
-- Framework cache/revalidation APIs over manual refresh logic
-- Design-system components over one-off UI primitives when the system exists
-- Batch or native platform APIs over manual orchestration
+## Verification
 
-The point is to avoid drift, mixed error models, duplicated validation, partial failure, and slow multi-round-trip flows. If a weaker path already exists, flag it as debt; do not add another one.
-
----
-
-# Andrej Karpathy's 4 Rules
-
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
-
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
-
-## 1. Think Before Coding
-
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
-
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
-
-## 2. Simplicity First
-
-**Minimum code that solves the problem. Nothing speculative.**
-
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
-
-## 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
----
-
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+Define verifiable success criteria and loop until they pass. Reproduce bugs with tests when practical, add focused regression coverage, and run the relevant checks before and after consequential refactors. For non-trivial multi-step work, maintain a brief plan, but surface it only when it helps coordination or exposes a decision.
 
 ---
 
 # Code Standards
 
-Use idiomatic naming for the language. Prefer strong types and generated types. Avoid `any`, un-narrowed `unknown`, untyped payloads, and implicit returns when the language/tooling can prevent them.
-
----
+Use idiomatic naming for the language. Prefer strong and generated types. Avoid `any`, un-narrowed `unknown`, untyped payloads, and implicit returns when the language and tooling can prevent them.

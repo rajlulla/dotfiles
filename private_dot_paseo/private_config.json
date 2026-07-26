@@ -10,7 +10,7 @@
     },
     "autoArchiveAfterMerge": true,
     "enableTerminalAgentHooks": false,
-    "appendSystemPrompt": "You are running inside Paseo.\n\nUse Paseo's MCP/tools and installed skills when they fit the task, especially for agents, worktrees, service URLs, terminal state, and handoffs. If this checkout has a `paseo.json`, read the full file before assuming how setup, teardown, scripts, services, ports, or worktree-specific environment are meant to work. Treat `paseo.json` as the project contract for Paseo UI actions and as the workflow reference for agents.\n\nIf `paseo.json` defines a long-running service such as `dev`, prefer an already-running Paseo-managed service and use its provided URL/proxy/env when available. Do not start a duplicate dev server. If browser verification is needed and the managed service is not running, you may start the dev server in a Paseo-managed terminal for the current worktree, using the worktree-safe port from `PASEO_WORKTREE_PORT` rather than a hardcoded port. Report the URL/port you started. Inside a managed service, use `PASEO_PORT`; inside terminal fallbacks, use `PASEO_WORKTREE_PORT`.\n\nOne-shot commands such as lint, tests, builds, migrations, local service setup, and diagnostics should be run normally when needed, following the command or script named in `paseo.json`.\n\nDo not assume default ports for project services in Paseo worktrees. Inspect project config, environment files, and Paseo service metadata before connecting to local services.\n\nDelegation policy: use Paseo agents for all subagent work — research, implementation, review, advisors — not built-in/inline subagent tools. Before creating any agent, actually read `~/.paseo/orchestration-preferences.json` and resolve provider, model, and reasoning effort through it; embedded examples in skills may be stale. For Claude-family models, prefer the explicit 1M-context ID ([1m]) when the model exposes one and the task involves large context or long runs; never append [1m] to models without a 1M variant and never invent provider IDs — verify with inspect_provider/list_models when uncertain, and confirm the created agent's model when 1M was intended. Claude-family agents run bypassPermissions; Codex agents run full-access, unless Raj asks for a safer mode.\n\nBrowser automation and UI verification must use playwright-cli. Do not use or drive the Paseo browser. When manual browser review is needed, provide Raj a reachable Tailscale URL and concise test steps; Raj performs the manual browser testing. Long-running processes (dev servers, watchers) go in named Paseo terminals, not background shells.",
+    "appendSystemPrompt": "You are running inside Paseo.\n\nSubagent-first orchestration: for substantial tasks, proactively use Paseo subagents without waiting for Raj to request them. At the start, identify work that can be delegated for repository reconnaissance, research, planning, implementation, UI, testing, audit, or independent review, and launch useful independent streams early. Keep the parent chat focused on decomposition, decisions, synthesis, steering, and final delivery. Parallelize independent or read-only work; avoid concurrent writers in the same worktree. For continuity-sensitive implementation and PR ownership, keep one durable owner and send routine follow-up to that same agent. Work directly only when the task is small, inherently sequential, or delegation overhead clearly exceeds the value.\n\nAll subagent work must use Paseo agents, not built-in or inline subagent tools. Before creating an agent, read `~/.paseo/orchestration-preferences.json`, select the role that fits the work, and apply its live provider and settings explicitly. Do not rely on model assignments embedded in skills or memory. Use asynchronous completion notifications instead of polling.\n\nUse Paseo's MCP/tools and installed skills when they fit the task, especially for agents, worktrees, service URLs, terminal state, and handoffs. If the checkout has a `paseo.json`, read the full file before assuming setup, teardown, scripts, services, ports, or worktree behavior; treat it as the project contract.\n\nReuse already-running Paseo-managed services and their provided URL, proxy, and environment. Do not start duplicate servers or assume default ports. Inside a managed service use `PASEO_PORT`; for a terminal fallback use `PASEO_WORKTREE_PORT` and report the URL. Run one-shot lint, test, build, migration, setup, and diagnostic commands normally, following `paseo.json` or repository instructions. Put long-running processes in named Paseo terminals, not background shells.\n\nUse `playwright-cli` for browser automation and UI verification; do not drive the Paseo browser. When Raj must review manually, provide a reachable Tailscale URL and concise test steps.\n\nWaiting and re-entry: use notifications or bounded waits, never unbounded sleep loops or timer vigils. On every wake, re-read the newest conversation input and re-query live state. A rejected, cancelled, or failed question does not authorize indefinite holding. If genuinely blocked, emit one resumable `BLOCKED` report and stop.",
     "terminalProfiles": [
       {
         "id": "claude",
@@ -39,6 +39,98 @@
   },
   "agents": {
     "providers": {
+      "claude": {
+        "models": [
+          {
+            "id": "claude-fable-5",
+            "label": "Fable 5",
+            "description": "Fable 5 · Most powerful model",
+            "thinkingOptions": [
+              { "id": "low", "label": "Low" },
+              { "id": "medium", "label": "Medium" },
+              { "id": "high", "label": "High" },
+              { "id": "xhigh", "label": "Extra High" },
+              { "id": "max", "label": "Max" },
+              { "id": "ultracode", "label": "Ultra Code" }
+            ]
+          },
+          {
+            "id": "claude-opus-4-8[1m]",
+            "label": "Opus 4.8 1M",
+            "description": "Opus 4.8 with 1M context window",
+            "isDefault": true,
+            "thinkingOptions": [
+              { "id": "low", "label": "Low" },
+              { "id": "medium", "label": "Medium" },
+              { "id": "high", "label": "High" },
+              { "id": "xhigh", "label": "Extra High" },
+              { "id": "max", "label": "Max" },
+              { "id": "ultracode", "label": "Ultra Code" }
+            ]
+          },
+          {
+            "id": "claude-sonnet-5",
+            "label": "Sonnet 5",
+            "description": "Sonnet 5 · Best for everyday tasks",
+            "thinkingOptions": [
+              { "id": "low", "label": "Low" },
+              { "id": "medium", "label": "Medium" },
+              { "id": "high", "label": "High" },
+              { "id": "xhigh", "label": "Extra High" },
+              { "id": "max", "label": "Max" },
+              { "id": "ultracode", "label": "Ultra Code" }
+            ]
+          },
+          {
+            "id": "claude-haiku-4-5",
+            "label": "Haiku 4.5",
+            "description": "Haiku 4.5 · Fastest for quick answers"
+          }
+        ]
+      },
+      "codex": {
+        "models": [
+          {
+            "id": "gpt-5.6-sol",
+            "label": "GPT-5.6-Sol",
+            "description": "Latest frontier agentic coding model.",
+            "isDefault": true,
+            "thinkingOptions": [
+              { "id": "low", "label": "Low" },
+              { "id": "medium", "label": "Medium", "isDefault": true },
+              { "id": "high", "label": "High" },
+              { "id": "xhigh", "label": "Extra High" },
+              { "id": "max", "label": "Max" },
+              { "id": "ultra", "label": "Ultra" }
+            ]
+          },
+          {
+            "id": "gpt-5.6-terra",
+            "label": "GPT-5.6-Terra",
+            "description": "Balanced agentic coding model for everyday work.",
+            "thinkingOptions": [
+              { "id": "low", "label": "Low" },
+              { "id": "medium", "label": "Medium", "isDefault": true },
+              { "id": "high", "label": "High" },
+              { "id": "xhigh", "label": "Extra High" },
+              { "id": "max", "label": "Max" },
+              { "id": "ultra", "label": "Ultra" }
+            ]
+          },
+          {
+            "id": "gpt-5.6-luna",
+            "label": "GPT-5.6-Luna",
+            "description": "Fast and affordable agentic coding model.",
+            "thinkingOptions": [
+              { "id": "low", "label": "Low" },
+              { "id": "medium", "label": "Medium", "isDefault": true },
+              { "id": "high", "label": "High" },
+              { "id": "xhigh", "label": "Extra High" },
+              { "id": "max", "label": "Max" }
+            ]
+          }
+        ]
+      },
       "copilot": {
         "enabled": false
       },
@@ -46,6 +138,9 @@
         "enabled": false
       },
       "pi": {
+        "enabled": false
+      },
+      "omp": {
         "enabled": false
       }
     }
