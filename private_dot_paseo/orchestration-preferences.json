@@ -2,13 +2,13 @@
   "providers": {
     "orchestrator": "claude/claude-fable-5",
     "planning": "claude/claude-fable-5",
-    "review": "claude/claude-fable-5",
-    "deep_reasoning": "claude/claude-opus-4-8[1m]",
+    "review": "codex/gpt-5.6-sol",
+    "deep_reasoning": "claude/claude-opus-5",
     "ui": "codex/gpt-5.6-sol",
     "taste_worker": "claude/claude-fable-5",
     "impl": "claude/claude-sonnet-5",
     "mechanical": "claude/claude-sonnet-5",
-    "audit": "claude/claude-opus-4-8[1m]",
+    "audit": "claude/claude-opus-5",
     "research": "claude/claude-sonnet-5",
     "fast_impl": "codex/gpt-5.6-luna",
     "cheap_fast": "codex/gpt-5.6-luna"
@@ -24,7 +24,7 @@
     },
     "review": {
       "purpose": "Critique proposed work or diffs for correctness, scope, and risk.",
-      "thinkingOptionId": "high"
+      "thinkingOptionId": "medium"
     },
     "deep_reasoning": {
       "purpose": "Resolve hard architecture, root-cause, and high-stakes judgment questions.",
@@ -64,19 +64,12 @@
     }
   },
   "preferences": [
-    "Treat the provider map and role profiles as defaults, not hard routing rules. Choose the role that fits the task, pass its provider string verbatim to Paseo, and apply its thinkingOptionId explicitly. Override only when task context, risk, or expected value justifies it.",
-    "Before launching Paseo agents, use provider/model/mode discovery when an exact provider ID, model, mode, feature, or effort option is uncertain. Do not invent provider IDs. Only Opus currently exposes a separate [1m] variant; Fable 5 and Sonnet 5 are natively 1M. Confirm the created agent matches the intended settings when model choice matters.",
-    "All subagent work inside Paseo goes through Paseo agents, not built-in or inline subagent tools, so model policy, cost visibility, and steering remain centralized.",
-    "Default to proactive delegation for substantial tasks. Launch useful independent research, reconnaissance, implementation, test, audit, UI, or review streams early without waiting for Raj to ask. Keep the parent focused on orchestration and synthesis. Work directly only when the task is small, inherently sequential, or coordination overhead clearly exceeds the value.",
-    "Claude-family agents should usually run with bypassPermissions unless Raj requests a safer sandbox. Codex agents should usually run full-access unless Raj requests restricted mode.",
-    "The live provider map is the authority for model routing. Do not preserve provider variety or follow remembered model assignments when they conflict with the selected role.",
-    "Do not use ultra as a default thinking level because it enables automatic task delegation; use it only when that behavior is explicitly intended.",
-    "For high-stakes decisions, use at least two independent perspectives from appropriate roles and preferably contrasting provider families, then synthesize.",
-    "For handoffs, the receiving agent starts blank. Include task, rationale, context, relevant files, current state, tried approaches, decisions, acceptance criteria, verification, constraints, and terminal success/blocker conditions.",
-    "For continuity-sensitive implementation and PR ownership, keep one durable owner and continue that same agent for routine follow-up. Use fresh loop workers only when continuity is intentionally unnecessary.",
-    "For loops, pair worker and verifier on different provider families when practical and bound loops with max iterations and/or max time.",
-    "For committees and advisors, use analysis-only prompts. They do not edit files; the orchestrator synthesizes and owns implementation decisions.",
-    "Judge outputs by correctness, completeness, simplicity, test coverage, alignment with user constraints, scope control, use of the strongest project primitive, absence of band-aids, verification quality, and explicit uncertainty.",
-    "Escalate when output quality is below the bar. Do not ship mediocre work because the first selected model was cheaper or faster."
+    "The provider map and role profiles are defaults, not hard routing rules. Pick the role that fits, pass its provider string verbatim, apply its thinkingOptionId. Override only when task risk or value justifies it.",
+    "Use provider/model discovery when an exact provider ID or option is uncertain; do not invent provider IDs. Confirm the created agent matches intended settings when model choice matters.",
+    "Claude agents usually run with bypassPermissions; Codex agents usually run full-access, unless Raj requests a safer sandbox.",
+    "Do not use ultra thinking as a default; it enables automatic task delegation. Use it only when that is intended.",
+    "Handoffs start blank: include task, context, relevant files, current state, decisions, acceptance criteria, verification, and terminal success/blocker conditions.",
+    "Bound loops with max iterations or max time. Committees and advisors are analysis-only; the orchestrator owns implementation decisions.",
+    "Escalate model or effort when output quality is below the bar; do not ship mediocre work because the first model was cheaper."
   ]
 }

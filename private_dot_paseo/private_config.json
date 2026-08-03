@@ -6,11 +6,11 @@
       "injectIntoAgents": true
     },
     "browserTools": {
-      "enabled": true
+      "enabled": false
     },
-    "autoArchiveAfterMerge": true,
+    "autoArchiveAfterMerge": false,
     "enableTerminalAgentHooks": false,
-    "appendSystemPrompt": "You are running inside Paseo.\n\nSubagent-first orchestration: for substantial tasks, proactively use Paseo subagents without waiting for Raj to request them. At the start, identify work that can be delegated for repository reconnaissance, research, planning, implementation, UI, testing, audit, or independent review, and launch useful independent streams early. Keep the parent chat focused on decomposition, decisions, synthesis, steering, and final delivery. Parallelize independent or read-only work; avoid concurrent writers in the same worktree. For continuity-sensitive implementation and PR ownership, keep one durable owner and send routine follow-up to that same agent. Work directly only when the task is small, inherently sequential, or delegation overhead clearly exceeds the value.\n\nAll subagent work must use Paseo agents, not built-in or inline subagent tools. Before creating an agent, read `~/.paseo/orchestration-preferences.json`, select the role that fits the work, and apply its live provider and settings explicitly. Do not rely on model assignments embedded in skills or memory. Use asynchronous completion notifications instead of polling.\n\nUse Paseo's MCP/tools and installed skills when they fit the task, especially for agents, worktrees, service URLs, terminal state, and handoffs. If the checkout has a `paseo.json`, read the full file before assuming setup, teardown, scripts, services, ports, or worktree behavior; treat it as the project contract.\n\nReuse already-running Paseo-managed services and their provided URL, proxy, and environment. Do not start duplicate servers or assume default ports. Inside a managed service use `PASEO_PORT`; for a terminal fallback use `PASEO_WORKTREE_PORT` and report the URL. Run one-shot lint, test, build, migration, setup, and diagnostic commands normally, following `paseo.json` or repository instructions. Put long-running processes in named Paseo terminals, not background shells.\n\nUse `playwright-cli` for browser automation and UI verification; do not drive the Paseo browser. When Raj must review manually, provide a reachable Tailscale URL and concise test steps.\n\nWaiting and re-entry: use notifications or bounded waits, never unbounded sleep loops or timer vigils. On every wake, re-read the newest conversation input and re-query live state. A rejected, cancelled, or failed question does not authorize indefinite holding. If genuinely blocked, emit one resumable `BLOCKED` report and stop.",
+    "appendSystemPrompt": "You are running inside Paseo.\n\nDelegation: use Paseo subagents to keep your own context small, not as a default posture. Delegate work that is genuinely parallel, bulky to read (repo-wide research, audits, long logs), or a long isolated implementation; work directly when the task is small, sequential, or the coordination overhead exceeds the savings. One durable owner per implementation or PR \u2014 send follow-ups to that same agent instead of spawning new ones. Avoid concurrent writers in one worktree. Before creating an agent, read `~/.paseo/orchestration-preferences.json` and apply the matching role's provider and settings. All subagent work goes through Paseo agents, not built-in subagent tools. Use async completion notifications, not polling.\n\nIf the checkout has a `paseo.json`, read it before assuming setup, scripts, services, ports, or worktree behavior. Reuse running Paseo-managed services and their URLs; never start duplicates or assume default ports. Inside a managed service use `PASEO_PORT`; terminal fallback uses `PASEO_WORKTREE_PORT`. Long-running processes go in named Paseo terminals, not background shells.\n\nUse `playwright-cli` for browser automation and UI verification; do not drive the Paseo browser. For manual review, give Raj a reachable Tailscale URL and short test steps.\n\nWaiting: bounded waits or notifications, never unbounded sleep loops. On every wake, re-read the newest input and re-query live state. If genuinely blocked, emit one resumable BLOCKED report and stop.",
     "terminalProfiles": [
       {
         "id": "claude",
@@ -44,47 +44,101 @@
           {
             "id": "claude-fable-5",
             "label": "Fable 5",
-            "description": "Fable 5 · Most powerful model",
+            "description": "Fable 5 \u00b7 Most powerful model",
             "thinkingOptions": [
-              { "id": "low", "label": "Low" },
-              { "id": "medium", "label": "Medium" },
-              { "id": "high", "label": "High" },
-              { "id": "xhigh", "label": "Extra High" },
-              { "id": "max", "label": "Max" },
-              { "id": "ultracode", "label": "Ultra Code" }
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium"
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Extra High"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              },
+              {
+                "id": "ultracode",
+                "label": "Ultra Code"
+              }
             ]
           },
           {
-            "id": "claude-opus-4-8[1m]",
-            "label": "Opus 4.8 1M",
-            "description": "Opus 4.8 with 1M context window",
+            "id": "claude-opus-5",
+            "label": "Opus 5",
+            "description": "Opus 5 \u00b7 Deep reasoning",
             "isDefault": true,
             "thinkingOptions": [
-              { "id": "low", "label": "Low" },
-              { "id": "medium", "label": "Medium" },
-              { "id": "high", "label": "High" },
-              { "id": "xhigh", "label": "Extra High" },
-              { "id": "max", "label": "Max" },
-              { "id": "ultracode", "label": "Ultra Code" }
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium"
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Extra High"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              },
+              {
+                "id": "ultracode",
+                "label": "Ultra Code"
+              }
             ]
           },
           {
             "id": "claude-sonnet-5",
             "label": "Sonnet 5",
-            "description": "Sonnet 5 · Best for everyday tasks",
+            "description": "Sonnet 5 \u00b7 Best for everyday tasks",
             "thinkingOptions": [
-              { "id": "low", "label": "Low" },
-              { "id": "medium", "label": "Medium" },
-              { "id": "high", "label": "High" },
-              { "id": "xhigh", "label": "Extra High" },
-              { "id": "max", "label": "Max" },
-              { "id": "ultracode", "label": "Ultra Code" }
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium"
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Extra High"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              },
+              {
+                "id": "ultracode",
+                "label": "Ultra Code"
+              }
             ]
           },
           {
             "id": "claude-haiku-4-5",
             "label": "Haiku 4.5",
-            "description": "Haiku 4.5 · Fastest for quick answers"
+            "description": "Haiku 4.5 \u00b7 Fastest for quick answers"
           }
         ]
       },
@@ -96,12 +150,31 @@
             "description": "Latest frontier agentic coding model.",
             "isDefault": true,
             "thinkingOptions": [
-              { "id": "low", "label": "Low" },
-              { "id": "medium", "label": "Medium", "isDefault": true },
-              { "id": "high", "label": "High" },
-              { "id": "xhigh", "label": "Extra High" },
-              { "id": "max", "label": "Max" },
-              { "id": "ultra", "label": "Ultra" }
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium",
+                "isDefault": true
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Extra High"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              },
+              {
+                "id": "ultra",
+                "label": "Ultra"
+              }
             ]
           },
           {
@@ -109,12 +182,31 @@
             "label": "GPT-5.6-Terra",
             "description": "Balanced agentic coding model for everyday work.",
             "thinkingOptions": [
-              { "id": "low", "label": "Low" },
-              { "id": "medium", "label": "Medium", "isDefault": true },
-              { "id": "high", "label": "High" },
-              { "id": "xhigh", "label": "Extra High" },
-              { "id": "max", "label": "Max" },
-              { "id": "ultra", "label": "Ultra" }
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium",
+                "isDefault": true
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Extra High"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              },
+              {
+                "id": "ultra",
+                "label": "Ultra"
+              }
             ]
           },
           {
@@ -122,11 +214,27 @@
             "label": "GPT-5.6-Luna",
             "description": "Fast and affordable agentic coding model.",
             "thinkingOptions": [
-              { "id": "low", "label": "Low" },
-              { "id": "medium", "label": "Medium", "isDefault": true },
-              { "id": "high", "label": "High" },
-              { "id": "xhigh", "label": "Extra High" },
-              { "id": "max", "label": "Max" }
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium",
+                "isDefault": true
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Extra High"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              }
             ]
           }
         ]
