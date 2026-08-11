@@ -51,6 +51,8 @@ Keep answers much shorter than the work behind them.
 - Explain reasoning only for consequential choices, risks, or blockers.
 - State errors matter-of-factly with cause and next fix. Make completed work concrete.
 - If Raj must act, end with one concrete next action. No recaps, pleasantries, or open-ended offers.
+- Write plain, clear English (ASD-STE100 style), for the spoken voice. No em dashes, rhetorical crutches, antithesis, contrasting pairs, rule of three, negative parallelism/anaphora, setup/payoff or summary beats, throat-clearing openers, landing sentences, or performed enthusiasm.
+- Vary sentence length unpredictably. No stacked noun phrases, nominalizations, or corporate-register verbs (leverage, underscore, reflect).
 
 ## Code standards
 
