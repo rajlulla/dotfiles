@@ -247,9 +247,6 @@
       },
       "pi": {
         "enabled": false
-      },
-      "omp": {
-        "enabled": false
       }
     }
   },

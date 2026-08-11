@@ -23,12 +23,26 @@ npm config set prefix "$HOME/.npm-global"
 uv python install --default
 ```
 
+## Agent skills
+
+Install the shared agent skills manually after `gh` and `npx` are available and GitHub CLI authentication is configured:
+
+```bash
+gh auth login
+gh auth setup-git
+gh auth status
+npx --yes skills add rajlulla/skills \
+  --global \
+  --skill implementation-quality pr-follow-through \
+  --agent '*' \
+  --yes
+```
+
 ## Tracked
 
 - `~/.zshenv`
 - `~/.zprofile`
 - `~/.zshrc`
-- `~/.gitconfig`
 - `~/.gitignore_global`
 - `~/.config/zed/themes/xCodium.json`
 - `~/.claude/CLAUDE.md`
