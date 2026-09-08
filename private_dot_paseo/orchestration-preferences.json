@@ -1,75 +1,42 @@
 {
   "providers": {
-    "orchestrator": "claude/claude-fable-5",
-    "planning": "claude/claude-fable-5",
-    "review": "codex/gpt-5.6-sol",
-    "deep_reasoning": "claude/claude-opus-5",
-    "ui": "codex/gpt-5.6-sol",
-    "taste_worker": "claude/claude-fable-5",
-    "impl": "claude/claude-sonnet-5",
-    "mechanical": "claude/claude-sonnet-5",
-    "audit": "claude/claude-opus-5",
-    "research": "claude/claude-sonnet-5",
-    "fast_impl": "codex/gpt-5.6-luna",
-    "cheap_fast": "codex/gpt-5.6-luna"
+    "default": "omp/anthropic/claude-fable-5-1",
+    "smol": "omp/openai-codex/gpt-5.6-luna",
+    "slow": "omp/openai-codex/gpt-6-astra",
+    "plan": "omp/anthropic/claude-fable-5-1",
+    "task": "omp/anthropic/claude-sonnet-5",
+    "commit": "omp/openai-codex/gpt-5.6-luna",
+    "designer": "omp/anthropic/claude-sonnet-5",
+    "vision": "omp/openai-codex/gpt-6-astra"
   },
   "role_profiles": {
-    "orchestrator": {
-      "purpose": "Own task decomposition, delegation, synthesis, and final delivery.",
-      "thinkingOptionId": "high"
-    },
-    "planning": {
-      "purpose": "Develop plans, clarify tradeoffs, and define verifiable acceptance criteria.",
+    "default": {
       "thinkingOptionId": "medium"
     },
-    "review": {
-      "purpose": "Critique proposed work or diffs for correctness, scope, and risk.",
-      "thinkingOptionId": "medium"
-    },
-    "deep_reasoning": {
-      "purpose": "Resolve hard architecture, root-cause, and high-stakes judgment questions.",
-      "thinkingOptionId": "xhigh"
-    },
-    "ui": {
-      "purpose": "Build, refine, and visually verify product UI.",
-      "thinkingOptionId": "medium"
-    },
-    "taste_worker": {
-      "purpose": "Create or critique visual presentation, interaction design, and product polish.",
-      "thinkingOptionId": "high"
-    },
-    "impl": {
-      "purpose": "Implement substantial product changes, including tests and verification.",
-      "thinkingOptionId": "high"
-    },
-    "mechanical": {
-      "purpose": "Execute bounded, well-specified implementation or maintenance work.",
-      "thinkingOptionId": "medium"
-    },
-    "audit": {
-      "purpose": "Inspect code, migrations, tests, and integrations for defects and regressions.",
-      "thinkingOptionId": "high"
-    },
-    "research": {
-      "purpose": "Investigate repositories, documentation, and technical questions before a decision or implementation.",
-      "thinkingOptionId": "medium"
-    },
-    "fast_impl": {
-      "purpose": "Handle straightforward implementation work where turnaround matters more than maximum depth.",
-      "thinkingOptionId": "medium"
-    },
-    "cheap_fast": {
-      "purpose": "Handle low-risk, tightly bounded tasks at minimum cost.",
+    "smol": {
       "thinkingOptionId": "low"
+    },
+    "slow": {
+      "thinkingOptionId": "high"
+    },
+    "plan": {
+      "thinkingOptionId": "medium"
+    },
+    "task": {
+      "thinkingOptionId": "high"
+    },
+    "commit": {
+      "thinkingOptionId": "low"
+    },
+    "designer": {
+      "thinkingOptionId": "high"
+    },
+    "vision": {
+      "thinkingOptionId": "high"
     }
   },
   "preferences": [
-    "The provider map and role profiles are defaults, not hard routing rules. Pick the role that fits, pass its provider string verbatim, apply its thinkingOptionId. Override only when task risk or value justifies it.",
-    "Use provider/model discovery when an exact provider ID or option is uncertain; do not invent provider IDs. Confirm the created agent matches intended settings when model choice matters.",
-    "Claude agents usually run with bypassPermissions; Codex agents usually run full-access, unless Raj requests a safer sandbox.",
-    "Do not use ultra thinking as a default; it enables automatic task delegation. Use it only when that is intended.",
-    "Handoffs start blank: include task, context, relevant files, current state, decisions, acceptance criteria, verification, and terminal success/blocker conditions.",
-    "Bound loops with max iterations or max time. Committees and advisors are analysis-only; the orchestrator owns implementation decisions.",
-    "Escalate model or effort when output quality is below the bar; do not ship mediocre work because the first model was cheaper."
+    "Model and thinking assignments mirror ~/.omp/agent/config.yml modelRoles. Use OMP subagents within a job; use Paseo agents for separately managed jobs.",
+    "For Paseo launches, use the provider string as written. For OMP-native launches, remove only the leading omp/ runtime prefix."
   ]
 }

@@ -10,7 +10,7 @@
     },
     "autoArchiveAfterMerge": false,
     "enableTerminalAgentHooks": false,
-    "appendSystemPrompt": "You are running inside Paseo.\n\nDelegation: use Paseo subagents to keep your own context small, not as a default posture. Delegate work that is genuinely parallel, bulky to read (repo-wide research, audits, long logs), or a long isolated implementation; work directly when the task is small, sequential, or the coordination overhead exceeds the savings. One durable owner per implementation or PR \u2014 send follow-ups to that same agent instead of spawning new ones. Avoid concurrent writers in one worktree. Before creating an agent, read `~/.paseo/orchestration-preferences.json` and apply the matching role's provider and settings. All subagent work goes through Paseo agents, not built-in subagent tools. Use async completion notifications, not polling.\n\nIf the checkout has a `paseo.json`, read it before assuming setup, scripts, services, ports, or worktree behavior. Reuse running Paseo-managed services and their URLs; never start duplicates or assume default ports. Inside a managed service use `PASEO_PORT`; terminal fallback uses `PASEO_WORKTREE_PORT`. Long-running processes go in named Paseo terminals, not background shells.\n\nUse `playwright-cli` for browser automation and UI verification; do not drive the Paseo browser. For manual review, give Raj a reachable Tailscale URL and short test steps.\n\nWaiting: bounded waits or notifications, never unbounded sleep loops. On every wake, re-read the newest input and re-query live state. If genuinely blocked, emit one resumable BLOCKED report and stop.",
+    "appendSystemPrompt": "",
     "terminalProfiles": [
       {
         "id": "claude",
@@ -25,6 +25,7 @@
         "icon": "codex"
       }
     ],
+    "agentProfiles": [],
     "cors": {
       "allowedOrigins": [
         "https://app.paseo.sh"
@@ -42,9 +43,9 @@
       "claude": {
         "models": [
           {
-            "id": "claude-fable-5",
-            "label": "Fable 5",
-            "description": "Fable 5 \u00b7 Most powerful model",
+            "id": "claude-fable-5-1",
+            "label": "Fable 5.1",
+            "description": "Fable 5.1 \u00b7 Most powerful model",
             "thinkingOptions": [
               {
                 "id": "low",
@@ -140,10 +141,40 @@
             "label": "Haiku 4.5",
             "description": "Haiku 4.5 \u00b7 Fastest for quick answers"
           }
-        ]
+        ],
+        "enabled": false
       },
       "codex": {
         "models": [
+          {
+            "id": "gpt-6-astra",
+            "label": "GPT-6-Astra",
+            "description": "Frontier model for complex reasoning and end-to-end coding.",
+            "isDefault": false,
+            "thinkingOptions": [
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium",
+                "isDefault": true
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Extra High"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              }
+            ]
+          },
           {
             "id": "gpt-5.6-sol",
             "label": "GPT-5.6-Sol",
@@ -237,7 +268,8 @@
               }
             ]
           }
-        ]
+        ],
+        "enabled": false
       },
       "copilot": {
         "enabled": false
@@ -247,6 +279,193 @@
       },
       "pi": {
         "enabled": false
+      },
+      "omp": {
+        "enabled": true,
+        "models": [
+          {
+            "id": "openai-codex/gpt-5.6-luna",
+            "label": "GPT-5.6-Luna",
+            "thinkingOptions": [
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium"
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Xhigh"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              }
+            ]
+          },
+          {
+            "id": "openai-codex/gpt-5.6-sol",
+            "label": "GPT-5.6-Sol",
+            "thinkingOptions": [
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium"
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Xhigh"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              }
+            ]
+          },
+          {
+            "id": "openai-codex/gpt-5.6-terra",
+            "label": "GPT-5.6-Terra",
+            "thinkingOptions": [
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium"
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Xhigh"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              }
+            ]
+          },
+          {
+            "id": "openai-codex/gpt-6-astra",
+            "label": "GPT-6-Astra",
+            "thinkingOptions": [
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium"
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Xhigh"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              }
+            ]
+          },
+          {
+            "id": "anthropic/claude-fable-5-1",
+            "label": "Fable 5.1",
+            "thinkingOptions": [
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium"
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Xhigh"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              }
+            ]
+          },
+          {
+            "id": "anthropic/claude-opus-5",
+            "label": "Opus 5",
+            "thinkingOptions": [
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium"
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Xhigh"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              }
+            ]
+          },
+          {
+            "id": "anthropic/claude-sonnet-5",
+            "label": "Sonnet 5",
+            "thinkingOptions": [
+              {
+                "id": "low",
+                "label": "Low"
+              },
+              {
+                "id": "medium",
+                "label": "Medium"
+              },
+              {
+                "id": "high",
+                "label": "High"
+              },
+              {
+                "id": "xhigh",
+                "label": "Xhigh"
+              },
+              {
+                "id": "max",
+                "label": "Max"
+              }
+            ]
+          }
+        ]
       }
     }
   },
