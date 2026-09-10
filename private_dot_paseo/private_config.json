@@ -10,7 +10,7 @@
     },
     "autoArchiveAfterMerge": false,
     "enableTerminalAgentHooks": false,
-    "appendSystemPrompt": "",
+    "appendSystemPrompt": "Use Paseo for subagent work. Choose models and thinking from `list_profiles`. Use completion notifications instead of polling. Verify delegated results. For dependent work, keep the current turn active with a blocking `paseo wait <agent-id>`; completion notifications are one-shot wakeups, not persistent subscriptions.",
     "terminalProfiles": [
       {
         "id": "claude",
@@ -25,7 +25,71 @@
         "icon": "codex"
       }
     ],
-    "agentProfiles": [],
+    "agentProfiles": [
+      {
+        "id": "owner",
+        "name": "Owner / planner",
+        "provider": "claude",
+        "model": "claude-fable-5-1",
+        "thinkingOptionId": "medium",
+        "notes": "Default owner and planner for substantial work; coordinate and integrate delegated results.",
+        "modeId": "bypassPermissions"
+      },
+      {
+        "id": "implementer",
+        "name": "Implementer",
+        "provider": "claude",
+        "model": "claude-sonnet-5",
+        "thinkingOptionId": "high",
+        "notes": "Bounded implementation with clear scope and acceptance criteria.",
+        "modeId": "bypassPermissions"
+      },
+      {
+        "id": "scout",
+        "name": "Scout / small tasks",
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "thinkingOptionId": "low",
+        "notes": "Bounded research, navigation, and small predictable tasks; escalate uncertainty.",
+        "modeId": "full-access"
+      },
+      {
+        "id": "deep-technical",
+        "name": "Deep technical work",
+        "provider": "codex",
+        "model": "gpt-6-astra",
+        "thinkingOptionId": "high",
+        "notes": "Difficult debugging, architecture, and technical reasoning.",
+        "modeId": "full-access"
+      },
+      {
+        "id": "design-vision",
+        "name": "Design / vision",
+        "provider": "codex",
+        "model": "gpt-6-astra",
+        "thinkingOptionId": "high",
+        "notes": "Visual analysis, UI design, and image-heavy work.",
+        "modeId": "full-access"
+      },
+      {
+        "id": "review-openai",
+        "name": "OpenAI reviewer",
+        "provider": "codex",
+        "model": "gpt-6-astra",
+        "thinkingOptionId": "high",
+        "notes": "Independent read-only review of Claude-authored work. Inspect exact artifacts and evidence.",
+        "modeId": "full-access"
+      },
+      {
+        "id": "review-claude",
+        "name": "Claude reviewer",
+        "provider": "claude",
+        "model": "claude-opus-5",
+        "thinkingOptionId": "high",
+        "notes": "Independent read-only review of OpenAI-authored work. Inspect exact artifacts and evidence.",
+        "modeId": "bypassPermissions"
+      }
+    ],
     "cors": {
       "allowedOrigins": [
         "https://app.paseo.sh"
@@ -142,7 +206,7 @@
             "description": "Haiku 4.5 \u00b7 Fastest for quick answers"
           }
         ],
-        "enabled": false
+        "enabled": true
       },
       "codex": {
         "models": [
@@ -269,7 +333,7 @@
             ]
           }
         ],
-        "enabled": false
+        "enabled": true
       },
       "copilot": {
         "enabled": false
@@ -281,191 +345,7 @@
         "enabled": false
       },
       "omp": {
-        "enabled": true,
-        "models": [
-          {
-            "id": "openai-codex/gpt-5.6-luna",
-            "label": "GPT-5.6-Luna",
-            "thinkingOptions": [
-              {
-                "id": "low",
-                "label": "Low"
-              },
-              {
-                "id": "medium",
-                "label": "Medium"
-              },
-              {
-                "id": "high",
-                "label": "High"
-              },
-              {
-                "id": "xhigh",
-                "label": "Xhigh"
-              },
-              {
-                "id": "max",
-                "label": "Max"
-              }
-            ]
-          },
-          {
-            "id": "openai-codex/gpt-5.6-sol",
-            "label": "GPT-5.6-Sol",
-            "thinkingOptions": [
-              {
-                "id": "low",
-                "label": "Low"
-              },
-              {
-                "id": "medium",
-                "label": "Medium"
-              },
-              {
-                "id": "high",
-                "label": "High"
-              },
-              {
-                "id": "xhigh",
-                "label": "Xhigh"
-              },
-              {
-                "id": "max",
-                "label": "Max"
-              }
-            ]
-          },
-          {
-            "id": "openai-codex/gpt-5.6-terra",
-            "label": "GPT-5.6-Terra",
-            "thinkingOptions": [
-              {
-                "id": "low",
-                "label": "Low"
-              },
-              {
-                "id": "medium",
-                "label": "Medium"
-              },
-              {
-                "id": "high",
-                "label": "High"
-              },
-              {
-                "id": "xhigh",
-                "label": "Xhigh"
-              },
-              {
-                "id": "max",
-                "label": "Max"
-              }
-            ]
-          },
-          {
-            "id": "openai-codex/gpt-6-astra",
-            "label": "GPT-6-Astra",
-            "thinkingOptions": [
-              {
-                "id": "low",
-                "label": "Low"
-              },
-              {
-                "id": "medium",
-                "label": "Medium"
-              },
-              {
-                "id": "high",
-                "label": "High"
-              },
-              {
-                "id": "xhigh",
-                "label": "Xhigh"
-              },
-              {
-                "id": "max",
-                "label": "Max"
-              }
-            ]
-          },
-          {
-            "id": "anthropic/claude-fable-5-1",
-            "label": "Fable 5.1",
-            "thinkingOptions": [
-              {
-                "id": "low",
-                "label": "Low"
-              },
-              {
-                "id": "medium",
-                "label": "Medium"
-              },
-              {
-                "id": "high",
-                "label": "High"
-              },
-              {
-                "id": "xhigh",
-                "label": "Xhigh"
-              },
-              {
-                "id": "max",
-                "label": "Max"
-              }
-            ]
-          },
-          {
-            "id": "anthropic/claude-opus-5",
-            "label": "Opus 5",
-            "thinkingOptions": [
-              {
-                "id": "low",
-                "label": "Low"
-              },
-              {
-                "id": "medium",
-                "label": "Medium"
-              },
-              {
-                "id": "high",
-                "label": "High"
-              },
-              {
-                "id": "xhigh",
-                "label": "Xhigh"
-              },
-              {
-                "id": "max",
-                "label": "Max"
-              }
-            ]
-          },
-          {
-            "id": "anthropic/claude-sonnet-5",
-            "label": "Sonnet 5",
-            "thinkingOptions": [
-              {
-                "id": "low",
-                "label": "Low"
-              },
-              {
-                "id": "medium",
-                "label": "Medium"
-              },
-              {
-                "id": "high",
-                "label": "High"
-              },
-              {
-                "id": "xhigh",
-                "label": "Xhigh"
-              },
-              {
-                "id": "max",
-                "label": "Max"
-              }
-            ]
-          }
-        ]
+        "enabled": false
       }
     }
   },
